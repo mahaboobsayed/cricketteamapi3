@@ -10,7 +10,7 @@ let db = null;
 const initiliazeDBAndServer = async () => {
   try {
     db = await open({ filename: dbPath, driver: sqlite3.Database });
-    app.listen(3009, () => {
+    app.listen(3000, () => {
       console.log("server running at http://localhost:3009/");
     });
   } catch (e) {
@@ -39,7 +39,7 @@ app.post("/players/", async (request, response) => {
   const playerDetails = request.body;
   const { playerName, jerseyNumber, role } = playerDetails;
   const new_player_data_Query = `INSERT INTO cricket_team (player_name,jersey_number,role)
-    values(${playerName},${jerseyNumber},${role});`;
+    values('${playerName}',${jerseyNumber},'${role}');`;
   const new_player = await db.run(new_player_data_Query);
   response.send("Player Added to Team");
 });
@@ -62,16 +62,16 @@ app.put("/players/:playerId/", async (request, response) => {
   const update_player_Query = `UPDATE cricket_team
     SET
     
-    player_name=${playerName},
+    player_name='${playerName}',
     jersey_number=${jerseyNumber},
-    role=${role}
+    role='${role}'
     WHERE
     player_id=${playerId}`;
   const updated_player = await db.run(update_player_Query);
   response.send("Player Details Updated");
 });
 app.delete("/players/:playerId/", async (request, response) => {
-  const { playerID } = request.params;
+  const { playerId } = request.params;
   const delete_Query = `DELETE FROM cricket_team
     WHERE
     player_id=${playerId}`;
